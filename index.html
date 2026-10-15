@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HONEY BEAR | Sleepy Squircle HUD</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Orbitron:wght@600;800;900&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <main id="cockpit" class="theme-snorlax engine-off hp-high" aria-label="Vehicle HUD">
+
+    <!-- FLOATING MINI AUDIO PILL DI ATAS KEPALA BERUANG -->
+    <div id="mini-music-pill" class="mini-music-pill no-drag" aria-label="Mini Audio Controller">
+      <div class="mini-pill-left">
+        <span id="miniSourceBadge" class="mini-source-badge">📻 RADIO</span>
+        <div id="miniEq" class="mini-eq" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+
+      <div class="mini-track-wrap" title="Sedang Diputar">
+        <div id="miniTrackTitle" class="mini-track-title">Delta FM</div>
+      </div>
+
+      <div class="mini-pill-controls">
+        <button id="btn-mini-prev" class="mini-ctrl-btn" type="button" title="Sebelumnya">⏮</button>
+        <button id="btn-mini-play" class="mini-ctrl-btn mini-play-toggle" type="button" title="Play / Pause">▶</button>
+        <button id="btn-mini-next" class="mini-ctrl-btn" type="button" title="Berikutnya">⏭</button>
+        <button id="btn-mini-open" class="mini-ctrl-btn mini-panel-btn" type="button" title="Buka Panel Musik">🎵</button>
+        <button id="btn-mini-close" class="mini-ctrl-btn mini-close-btn" type="button" title="Sembunyikan Mini Player">×</button>
+      </div>
+    </div>
+
+    <!-- PENGATURAN HUD & DUAL-MODE MUSIC PLAYER -->
+    <div id="settingsMenu">
+      <div class="settings-heading">
+        <span class="settings-dot"></span>
+        <span>HONEY BEAR CONFIG</span>
+        <button id="closeSettings" class="icon-button" type="button" aria-label="Tutup pengaturan">×</button>
+      </div>
+
+      <div class="menu-btns">
+        <button type="button" data-act="resize">Resize</button>
+        <button type="button" data-act="move">Pindah</button>
+        <button type="button" data-act="reset">Reset</button>
+        <button type="button" data-act="theme">Theme</button>
+      </div>
+
+      <!-- PANEL DUAL-MODE AUDIO (RADIO FM & YOUTUBE) -->
+      <section id="music-panel" class="music-panel no-drag" aria-label="Dual Mode Audio Player">
+        <!-- Tab Navigasi Audio -->
+        <div class="audio-tabs" role="tablist">
+          <button id="tabBtnRadio" class="audio-tab active" type="button" data-tab="radio" role="tab" aria-selected="true">
+            📻 Radio FM
+          </button>
+          <button id="tabBtnYoutube" class="audio-tab" type="button" data-tab="youtube" role="tab" aria-selected="false">
+            ▶ YouTube
+          </button>
+        </div>
+
+        <!-- TAB 1: LIVE RADIO FM STREAMING -->
+        <div id="tabContentRadio" class="audio-tab-pane active" role="tabpanel">
+          <div class="radio-display">
+            <div class="radio-badge">LIVE FM</div>
+            <div class="radio-meta">
+              <div id="stationName" class="radio-station-name">Delta FM</div>
+              <div id="radioStatus" class="radio-status-text">Stopped</div>
+            </div>
+            <div class="radio-eq" aria-hidden="true">
+              <span></span><span></span><span></span><span></span>
+            </div>
+          </div>
+
+          <div class="radio-select-wrap">
+            <select id="stationSelect" class="radio-select" aria-label="Pilih Stasiun Radio"></select>
+          </div>
+
+          <div class="music-main-controls">
+            <button id="btn-radio-prev" class="music-control-btn" type="button" title="Stasiun Sebelumnya">⏮</button>
+            <button id="btn-radio-play" class="music-play-btn" type="button" title="Play / Pause Radio">▶</button>
+            <button id="btn-radio-next" class="music-control-btn" type="button" title="Stasiun Berikutnya">⏭</button>
+          </div>
+
+          <div class="music-volume-row">
+            <button id="btn-radio-mute" class="music-icon-btn" type="button" title="Mute Radio">🔊</button>
+            <input id="radio-volume" class="music-range" type="range" min="0" max="100" value="80" step="1" aria-label="Radio Volume">
+            <span id="radio-volume-label" class="volume-pct">80%</span>
+            <button id="btn-radio-add-toggle" class="music-small-btn music-add-toggle" type="button" title="Tambah saluran radio via link">＋</button>
+          </div>
+
+          <!-- Form Tambah Saluran Radio Kustom -->
+          <div id="radio-add-row" class="music-add-row hide">
+            <input id="radio-url-input" type="text" placeholder="Link Stream Radio (http/https)" autocomplete="off">
+            <input id="radio-title-input" type="text" placeholder="Nama Radio (opsional)" autocomplete="off">
+            <button id="btn-radio-add" class="music-small-btn music-add-primary" type="button" title="Simpan & Putar">▶</button>
+          </div>
+
+          <!-- Daftar Playlist Radio -->
+          <div class="music-playlist-head">
+            <span>Saluran Radio</span>
+            <button id="btn-radio-clear" class="music-text-btn" type="button" title="Hapus semua radio tambahan">↺</button>
+          </div>
+          <div id="radio-playlist" class="music-playlist" role="list"></div>
+        </div>
+
+        <!-- TAB 2: YOUTUBE LINK & PLAYLIST -->
+        <div id="tabContentYoutube" class="audio-tab-pane" role="tabpanel">
+          <div class="music-now-playing">
+            <div class="music-video-wrap">
+              <div id="youtube-player"></div>
+              <img id="music-cover" class="music-cover" alt="" aria-hidden="true">
+              <div id="music-player-placeholder" class="music-placeholder">
+                <span class="music-placeholder-note" aria-label="Music">♪</span>
+              </div>
+            </div>
+            <div class="music-track-meta">
+              <div id="music-track-title">Belum ada lagu</div>
+              <div id="music-track-subtitle">Online playback</div>
+            </div>
+          </div>
+
+          <div class="music-progress-row">
+            <span id="music-current-time">0:00</span>
+            <input id="music-progress" class="music-range" type="range" min="0" max="1000" value="0" step="1" aria-label="Song progress">
+            <span id="music-duration">0:00</span>
+          </div>
+
+          <div class="music-main-controls">
+            <button id="btn-music-prev" class="music-control-btn" type="button" title="Previous">⏮</button>
+            <button id="btn-music-play" class="music-play-btn" type="button" title="Play / Pause">▶</button>
+            <button id="btn-music-next" class="music-control-btn" type="button" title="Next">⏭</button>
+          </div>
+
+          <div class="music-volume-row">
+            <button id="btn-music-mute" class="music-icon-btn" type="button" title="Mute">🔊</button>
+            <input id="music-volume" class="music-range" type="range" min="0" max="100" value="80" step="1" aria-label="Volume">
+            <button id="btn-music-add-toggle" class="music-small-btn music-add-toggle" type="button" title="Tambah lagu">＋</button>
+          </div>
+
+          <div id="music-add-row" class="music-add-row hide">
+            <input id="music-url-input" type="text" placeholder="Link YouTube / ID Video" autocomplete="off">
+            <input id="music-title-input" type="text" placeholder="Nama lagu (opsional)" autocomplete="off">
+            <button id="btn-music-add" class="music-small-btn music-add-primary" type="button">▶</button>
+          </div>
+
+          <div class="music-tools-row">
+            <button id="btn-music-repeat" class="music-tool-btn" type="button" title="Ulangi lagu">↻</button>
+            <button id="btn-music-shuffle" class="music-tool-btn" type="button" title="Putar acak">⤨</button>
+          </div>
+
+          <div class="music-playlist-head">
+            <span>Playlist</span>
+            <button id="btn-music-clear" class="music-text-btn" type="button" title="Kosongkan playlist">×</button>
+          </div>
+          <div id="music-playlist" class="music-playlist" role="list">
+            <div class="music-empty">Playlist kosong. Tekan + untuk menambah lagu.</div>
+          </div>
+        </div>
+      </section>
+
+      <div id="settingsHint">Klik kanan untuk menutup menu</div>
+      <div class="settings-footer">
+        <span>BEAR HUD OS</span>
+        <span>STOC INC.</span>
+      </div>
+    </div>
+
+    <!-- KEPALA BERUANG SQUIRCLE (BODI UTAMA SPEEDOMETER) -->
+    <div class="bear-wrapper">
+
+      <!-- UAP PANAS REDLINE (DI ATAS KEPALA) -->
+      <div class="steam-group" aria-hidden="true">
+        <span class="steam-puff s1"></span>
+        <span class="steam-puff s2"></span>
+        <span class="steam-puff s3"></span>
+      </div>
+
+      <!-- EFEK PUSING SAAT HEALTH < 20% -->
+      <div class="dizzy-crown" aria-hidden="true">
+        <span class="dizzy-ring"></span>
+        <span class="dizzy-star st-1">★</span>
+        <span class="dizzy-star st-2">✦</span>
+        <span class="dizzy-star st-3">★</span>
+      </div>
+
+      <!-- TELINGA BULAT KIRI & KANAN (LAMPU SEIN + REBAH TERTIUP ANGIN) -->
+      <div id="leftIndicator" class="ear left" title="Sein Kiri">
+        <svg viewBox="0 0 90 90" aria-hidden="true">
+          <circle class="ear-outer" cx="45" cy="45" r="38" />
+          <circle class="ear-inner" cx="47" cy="47" r="22" />
+          <path class="ear-signal" d="M48 33 L32 47 L48 61 L48 52 L60 52 L60 42 L48 42 Z" />
+        </svg>
+      </div>
+
+      <div id="rightIndicator" class="ear right" title="Sein Kanan">
+        <svg viewBox="0 0 90 90" aria-hidden="true">
+          <circle class="ear-outer" cx="45" cy="45" r="38" />
+          <circle class="ear-inner" cx="43" cy="47" r="22" />
+          <path class="ear-signal" d="M42 33 L58 47 L42 61 L42 52 L30 52 L30 42 L42 42 Z" />
+        </svg>
+      </div>
+
+      <!-- BODI KEPALA SQUIRCLE BERUANG -->
+      <div class="head">
+        <!-- Notifikasi Internal HUD -->
+        <div id="hudNotice" class="hud-notice" role="status" aria-live="polite"></div>
+
+        <!-- Garis terpaan angin saat mengebut -->
+        <div class="wind-lines" aria-hidden="true">
+          <span></span><span></span><span></span><span></span>
+        </div>
+
+        <!-- Jambul bulu imut di puncak kepala -->
+        <svg class="fur-tuft" viewBox="0 0 80 32" aria-hidden="true">
+          <path d="M12 28 C16 14 28 8 36 16 C40 4 54 4 56 17 C64 11 72 18 68 28 Z" />
+        </svg>
+
+        <!-- Plester luka silang saat Health < 80% -->
+        <div class="bandage" aria-hidden="true"></div>
+
+        <!-- BAR DAHI: INDIKATOR STATUS, DOOR LOCK, & HEALTH -->
+        <div class="forehead-bar">
+          <span class="hp-pill" title="Vehicle Health">
+            <span class="hp-heart">❤</span>
+            <b id="healthValue">100%</b>
+          </span>
+
+          <div class="status-icons">
+            <div id="engineCheck" class="vehicle-indicator" title="Engine Status">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 9h3l2-3h6l2 3h3v9h-3l-2 2H8l-2-2H4zM9 6V3h5v3M8 12h3m2 0h3" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div id="headlightIndicator" class="vehicle-indicator" title="Headlights">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 8h5a5 5 0 0 1 0 10H4zM13 8h7M13 12h8M13 16h7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div id="seatbeltIndicator" class="vehicle-indicator" title="Seatbelt">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M7 3l4 3-2 4 6 7 3-2 2 3-4 3-9-10 1-4-3-2z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <!-- Ikon Kunci Pintu / Vehicle Door Lock -->
+            <div id="doorLockIcon" class="vehicle-indicator unlocked" title="Doors: Unlocked">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path id="lockShackle" d="M7 11V7a5 5 0 0 1 9.9-1" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+                <rect x="5" y="11" width="14" height="10" rx="2.4" fill="none" stroke="currentColor" stroke-width="2.2" />
+                <circle cx="12" cy="15.5" r="1.3" fill="currentColor" />
+              </svg>
+            </div>
+          </div>
+
+          <span class="bear-tag">SLEEPY</span>
+        </div>
+
+        <!-- ZONA WAJAH: MATA, HIDUNG KANCING, BALON TIDUR, & PIPI MERONA -->
+        <div class="face-zone">
+          <!-- Mata Kiri -->
+          <div class="eye-wrap left-eye">
+            <span class="eyebrow"></span>
+            <div class="eye">
+              <span class="pupil">
+                <span class="eye-shine big"></span>
+                <span class="eye-shine small"></span>
+              </span>
+              <span class="lid"></span>
+              <span class="sleep-line"></span>
+            </div>
+            <!-- Api sudut mata saat Redline -->
+            <svg class="eye-flame" viewBox="0 0 32 32" aria-hidden="true">
+              <path d="M16 2 C22 10 28 14 26 23 C24 29 18 31 12 29 C6 27 5 20 9 14 C11 18 14 17 13 12 C12 8 14 4 16 2 Z"/>
+            </svg>
+            <!-- Air mata & keringat dingin muncrat ke samping saat >= 60 MPH -->
+            <span class="tear"></span>
+            <span class="sweat-spray s-a"></span>
+            <span class="sweat-spray s-b"></span>
+          </div>
+
+          <!-- Moncong & Hidung Kancing -->
+          <div class="snout-wrap">
+            <div id="bearNose" class="bear-nose" title="Headlight Glow">
+              <span class="nose-highlight"></span>
+            </div>
+            <div class="snout-philtrum"></div>
+
+            <!-- Gelembung Balon Tidur (Snot Bubble) -->
+            <div id="snotBubble" class="snot-bubble" aria-hidden="true">
+              <span class="bubble-shine"></span>
+            </div>
+            <div class="zzz-group" aria-hidden="true">
+              <span>z</span><span>Z</span><span>Z</span>
+            </div>
+          </div>
+
+          <!-- Mata Kanan -->
+          <div class="eye-wrap right-eye">
+            <span class="eyebrow"></span>
+            <div class="eye">
+              <span class="pupil">
+                <span class="eye-shine big"></span>
+                <span class="eye-shine small"></span>
+              </span>
+              <span class="lid"></span>
+              <span class="sleep-line"></span>
+            </div>
+            <svg class="eye-flame" viewBox="0 0 32 32" aria-hidden="true">
+              <path d="M16 2 C22 10 28 14 26 23 C24 29 18 31 12 29 C6 27 5 20 9 14 C11 18 14 17 13 12 C12 8 14 4 16 2 Z"/>
+            </svg>
+            <span class="tear"></span>
+            <span class="sweat-spray s-a"></span>
+            <span class="sweat-spray s-b"></span>
+          </div>
+
+          <!-- Pipi Merona -->
+          <div class="cheek left">
+            <span class="blush-lines">//</span>
+            <span class="hunger-sweat"></span>
+          </div>
+          <div class="cheek right">
+            <span class="blush-lines">//</span>
+            <span class="hunger-sweat"></span>
+          </div>
+        </div>
+
+        <!-- RONGGA MULUT MENGUAP = LAYAR UTAMA SPEEDOMETER -->
+        <div class="mouth-container">
+          <!-- Bibir tertutup santai saat mesin mati -->
+          <div class="sleeping-mouth-line" aria-hidden="true">
+            <span>︶</span>
+            <span class="drool-drop"></span>
+          </div>
+
+          <div class="mouth">
+            <!-- Deretan Gigi Atas -->
+            <div id="teethTop" class="teeth teeth-top"></div>
+
+            <!-- Layar Kecepatan & Lidah Lelehan Madu -->
+            <div class="screen">
+              <div class="speed-wrap">
+                <div id="speedValue">000</div>
+                <div class="speed-side">
+                  <span id="speedUnit">MPH</span>
+                  <span id="extremeBadge" class="extreme-badge">WIND!</span>
+                </div>
+              </div>
+
+              <!-- Lidah Pink Membulat & Lelehan Madu Dinamis -->
+              <svg class="mouth-floor" viewBox="0 0 240 56" preserveAspectRatio="none" aria-hidden="true">
+                <path id="tonguePath" d="M0 56 L0 38 Q120 24 240 38 L240 56 Z" />
+                <path id="tongueCrease" d="M120 36 L120 54" />
+                <path id="honeyWavePath" d="M0 56 L0 44 L240 44 L240 56 Z" />
+              </svg>
+            </div>
+
+            <!-- Deretan Gigi Bawah -->
+            <div id="teethBottom" class="teeth teeth-bottom"></div>
+          </div>
+        </div>
+
+        <!-- DAGU BAWAH: BAR RPM MADU, STOPLES BENSIN, GEAR, & ODOMETER -->
+        <div class="chin">
+          <div class="rpm-track" title="RPM">
+            <div id="rpmFill">
+              <div class="honey-bubbles"></div>
+            </div>
+            <div class="rpm-red"></div>
+          </div>
+
+          <div class="chin-row">
+            <div class="chin-stat fuel" title="Honey Fuel">
+              <span class="jar-icon">🍯</span>
+              <span class="stat-label">FUEL</span>
+              <b id="fuelValue">100%</b>
+            </div>
+
+            <div class="gear-holder" title="Current Gear">
+              <span class="gear-label">GEAR</span>
+              <span id="gearValue" class="gear-badge">N</span>
+            </div>
+
+            <div class="chin-stat odo" title="Odometer">
+              <b id="odometerValue">0.0</b>
+              <span id="odoUnit" class="stat-label">MI</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- MEDALI KALUNG / HONEY BADGE FRAME DI BAWAH DAGU -->
+        <div class="collar-zone">
+          <div class="collar-strap"></div>
+          <div class="honey-medal" title="STOC Inc. • Master Chef">
+            <div class="medal-glow"></div>
+            <div class="medal-ring">
+              <img id="clusterLogo" src="logo.png" alt="Logo" class="cluster-logo">
+              <span class="medal-glass-shine"></span>
+            </div>
+            <div class="medal-ribbon">
+              <span class="ribbon-main">STOC Inc.</span>
+              <span class="ribbon-dot">•</span>
+              <span class="ribbon-sub">MASTER CHEF</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- INDIKATOR VISUAL OVERSPEED -->
+    <div id="alarmBanner" role="status" aria-live="polite">
+      <span class="alarm-symbol">💦</span>
+      <span>PANIC! 60+ MPH</span>
+    </div>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
